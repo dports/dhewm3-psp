@@ -43,45 +43,42 @@ If you have questions concerning this license or the applicable additional terms
 #include <locale.h>
 
 #ifdef __PSP__
-#include <SDL_main.h>
-extern "C"
+#include "SDL_main.h"
+#include <pspkernel.h>
+#include <pspdebug.h>
+#include <pspsdk.h>
+#include <pspthreadman.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+PSP_MODULE_INFO("dhewm3", 0, 1, 1);
+PSP_HEAP_SIZE_MAX();
+PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
+
+int sdl_psp_exit_callback(int arg1, int arg2, void *common)
 {
-	#include <pspkernel.h>
-	#include <pspdebug.h>
-	#include <pspsdk.h>
-	#include <pspthreadman.h>
-	#include <stdlib.h>
-	#include <stdio.h>
+	exit(0);
+	return 0;
+}
 
-	PSP_MODULE_INFO("dhewm3", 0, 1, 1);
-	PSP_HEAP_SIZE_MAX();
-	PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
+int sdl_psp_callback_thread(SceSize args, void *argp)
+{
+	int cbid;
+	cbid = sceKernelCreateCallback("Exit Callback",
+					   sdl_psp_exit_callback, NULL);
+	sceKernelRegisterExitCallback(cbid);
+	sceKernelSleepThreadCB();
+	return 0;
+}
 
-	int sdl_psp_exit_callback(int arg1, int arg2, void *common)
-	{
-		exit(0);
-		return 0;
-	}
-
-	int sdl_psp_callback_thread(SceSize args, void *argp)
-	{
-		int cbid;
-		cbid = sceKernelCreateCallback("Exit Callback",
-						   sdl_psp_exit_callback, NULL);
-		sceKernelRegisterExitCallback(cbid);
-		sceKernelSleepThreadCB();
-		return 0;
-	}
-
-	int sdl_psp_setup_callbacks(void)
-	{
-		int thid = 0;
-		thid = sceKernelCreateThread("update_thread",
-						 sdl_psp_callback_thread, 0x11, 0xFA0, 0, 0);
-		if(thid >= 0)
-			sceKernelStartThread(thid, 0, 0);
-		return thid;
-	}
+int sdl_psp_setup_callbacks(void)
+{
+	int thid = 0;
+	thid = sceKernelCreateThread("update_thread",
+					 sdl_psp_callback_thread, 0x11, 0xFA0, 0, 0);
+	if(thid >= 0)
+		sceKernelStartThread(thid, 0, 0);
+	return thid;
 }
 #endif
 
@@ -457,22 +454,11 @@ void idSysLocal::OpenURL( const char *url, bool quit ) {
 
 /*
 ===============
-main
+main global
 ===============
 */
 
-int main(int argc, char *argv[])
-#ifdef __PSP__
-    pspDebugScreenInit();
-    sdl_psp_setup_callbacks();
-
-    atexit(sceKernelExitGame);
-
-    SDL_SetMainReady();
-
-    (void)SDL_main(argc, argv);
-	common->Init( 0, NULL );
-#else
+int main(int argc, char **argv) {
 	// fallback path to the binary for systems without /proc
 	// while not 100% reliable, its good enough
 	if (argc > 0) {
@@ -501,9 +487,31 @@ int main(int argc, char *argv[])
 	} else {
 		common->Init( 0, NULL );
 	}
-#endif
 	while (1) {
 		common->Frame();
 	}
 	return 0;
 }
+
+/*
+===============
+main PSP
+===============
+*/
+#ifdef __PSP__
+int main(int argc, char *argv[])
+    pspDebugScreenInit();
+    sdl_psp_setup_callbacks();
+
+    atexit(sceKernelExitGame);
+
+    SDL_SetMainReady();
+
+    (void)SDL_main(argc, argv);
+	common->Init( 0, NULL );
+	while (1) {
+		common->Frame();
+	}
+	return 0;
+}
+#endif
