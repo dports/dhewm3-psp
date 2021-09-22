@@ -15,8 +15,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup PSPTOOLCHAIN
       uses: krystalgamer/setup-psptoolchain@latest
-    - name: configure
-      run: ./configure
     - name: make
       run: make -f neo/Makefile.PSP
     - name: Upload a Build Artifact
