@@ -454,11 +454,25 @@ void idSysLocal::OpenURL( const char *url, bool quit ) {
 
 /*
 ===============
-main global
+main
 ===============
 */
+#ifdef __PSP__
+#define SDL_main main
+#endif
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[])
+#ifdef __PSP__
+    pspDebugScreenInit();
+    sdl_psp_setup_callbacks();
+
+    atexit(sceKernelExitGame);
+
+    SDL_SetMainReady();
+
+    (void)SDL_main(argc, argv);
+	common->Init( 0, NULL );
+#else
 	// fallback path to the binary for systems without /proc
 	// while not 100% reliable, its good enough
 	if (argc > 0) {
@@ -487,31 +501,9 @@ int main(int argc, char **argv) {
 	} else {
 		common->Init( 0, NULL );
 	}
-	while (1) {
-		common->Frame();
-	}
-	return 0;
-}
-
-/*
-===============
-main PSP
-===============
-*/
-#ifdef __PSP__
-int main(int argc, char *argv[])
-    pspDebugScreenInit();
-    sdl_psp_setup_callbacks();
-
-    atexit(sceKernelExitGame);
-
-    SDL_SetMainReady();
-
-    (void)SDL_main(argc, argv);
-	common->Init( 0, NULL );
-	while (1) {
-		common->Frame();
-	}
-	return 0;
-}
 #endif
+	while (1) {
+		common->Frame();
+	}
+	return 0;
+}

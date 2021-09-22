@@ -12,23 +12,33 @@ export OBJS = \
 
 LIBS = -lSDL -lGL -ljpeg -lvorbisfile -lvorbis -logg -lpspaudio -lpsphprm -lpsprtc -lpspvfpu -lpspirkeyb -lpsppower -lpspgu -lm -lstdc++ -lz
 
-CFLAGS = -O2 -G0 -D__PSP__ $(shell $(PSPBIN)/sdl-config --cflags) \
-         -I./game/
-CXXFLAGS = -fexceptions
-ASFLAGS = 
-
+PSP = yes
 BUILD_PRX = 0
-EXTRA_TARGETS = EBOOT.PBP
-PSP_EBOOT_TITLE = dhewm3
-#PSP_EBOOT_ICON= ICON0.png
-#PSP_EBOOT_PIC1= PIC1.png
-#PSP_EBOOT_SND0= SND0.at3
 PSP_FW_VERSION = 500
 PSP_LARGE_MEMORY = 1
 
-include $(PSPSDK)/lib/build.mak 
+CFLAGS = -O2 -g -Wall --fast-math -D__PSP__ $(shell $(PSPBIN)/sdl-config --cflags) -I./game/
+CFLAGS += -G0 -I/usr/local/pspdev/psp/include/SDL
+CXXFLAGS = -fexceptions
+
+EXTRA_TARGETS = EBOOT.PBP
+PSP_EBOOT_TITLE = dhewm3
+#PSP_EBOOT_ICON = ICON0.PNG
+#PSP_EBOOT_UNKPNG = PIC0.PNG
+#PSP_EBOOT_SND0 = SND0.AT3
+
+ifeq ($(PSP),yes)
+include $(PSPSDK)/lib/build.mak
+else
+
+all: dhewm3
+
+dhewm3: $(OBJS)
+	$(CC) $(LIBS) $(OBJS) -o dhewm3
+SRCS = \
+	/neo/sys/linux/main.cpp \
+
 install:
 	cp ./EBOOT.PBP $(MEDIA)$(TARGET)
 dir:
 	mkdir $(MEDIA)$(TARGET)
-
