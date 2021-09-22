@@ -1,6 +1,6 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
 PSPBIN=$(shell psp-config --psp-prefix)/bin
-MEDIA = /media/PANDORA/PSP/GAME/CAT_Homebrews\ perso/
+MEDIA = /home/runner/work/dhewm3-psp/dhewm3-psp/bin/
 TARGET = dhewm3
 
 SRC_RENDERER = \
