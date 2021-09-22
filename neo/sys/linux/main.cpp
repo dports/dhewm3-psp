@@ -460,11 +460,7 @@ void idSysLocal::OpenURL( const char *url, bool quit ) {
 main
 ===============
 */
-#ifdef __PSP__
-#define SDL_main main
-#endif
 
-extern "C"
 int main(int argc, char **argv) {
 #ifdef __PSP__
 	callbacks_setup();
