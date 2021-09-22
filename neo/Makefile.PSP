@@ -27,9 +27,7 @@ PSP_EBOOT_TITLE = dhewm3
 #PSP_EBOOT_UNKPNG = PIC0.PNG
 #PSP_EBOOT_SND0 = SND0.AT3
 
-ifeq ($(PSP),yes)
 include $(PSPSDK)/lib/build.mak
-else
 
 all: dhewm3
 
