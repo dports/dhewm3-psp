@@ -80,6 +80,9 @@ idCVar com_forceGenericSIMD( "com_forceGenericSIMD", "0", CVAR_BOOL|CVAR_SYSTEM,
 
 #endif
 
+#ifdef __PSP__
+extern idAASFileManager *	AASFileManager;
+#endif
 idRenderWorld *				gameRenderWorld = NULL;		// all drawing is done to this world
 idSoundWorld *				gameSoundWorld = NULL;		// all audio goes to this world
 

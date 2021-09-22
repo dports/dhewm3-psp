@@ -205,7 +205,7 @@ public:
 };
 
 bool		key_overstrikeMode = false;
-idKey *		keys = NULL;
+idKey *		_keys = NULL;
 
 #define ID_DOOM_LEGACY
 
@@ -296,12 +296,12 @@ bool idKeyInput::IsDown( int keynum ) {
 	//     but the same for keyboard shortcuts in the console and such
 	//     (this function is used for the latter)
 	if ( keynum == K_CTRL ) {
-		return keys[K_CTRL].down || keys[K_RIGHT_CTRL].down;
+		return _keys[K_CTRL].down || _keys[K_RIGHT_CTRL].down;
 	} else if ( keynum == K_SHIFT ) {
-		return keys[K_SHIFT].down || keys[K_RIGHT_SHIFT].down;
+		return _keys[K_SHIFT].down || _keys[K_RIGHT_SHIFT].down;
 	}
 
-	return keys[keynum].down;
+	return _keys[keynum].down;
 }
 
 /*
@@ -469,10 +469,10 @@ void idKeyInput::SetBinding( int keynum, const char *binding ) {
 	usercmdGen->Clear();
 
 	// allocate memory for new binding
-	keys[keynum].binding = binding;
+	_keys[keynum].binding = binding;
 
 	// find the action for the async command generation
-	keys[keynum].usercmdAction = usercmdGen->CommandStringUsercmdData( binding );
+	_keys[keynum].usercmdAction = usercmdGen->CommandStringUsercmdData( binding );
 
 	// consider this like modifying an archived cvar, so the
 	// file write will be triggered at the next oportunity
@@ -490,7 +490,7 @@ const char *idKeyInput::GetBinding( int keynum ) {
 		return "";
 	}
 
-	return keys[ keynum ].binding;
+	return _keys[ keynum ].binding;
 }
 
 /*
@@ -499,7 +499,7 @@ idKeyInput::GetUsercmdAction
 ===================
 */
 int idKeyInput::GetUsercmdAction( int keynum ) {
-	return keys[ keynum ].usercmdAction;
+	return _keys[ keynum ].usercmdAction;
 }
 
 /*
@@ -561,8 +561,8 @@ void Key_Bind_f( const idCmdArgs &args ) {
 	}
 
 	if ( c == 2 ) {
-		if ( keys[b].binding.Length() ) {
-			common->Printf( "\"%s\" = \"%s\"\n", args.Argv(1), keys[b].binding.c_str() );
+		if ( _keys[b].binding.Length() ) {
+			common->Printf( "\"%s\" = \"%s\"\n", args.Argv(1), _keys[b].binding.c_str() );
 		}
 		else {
 			common->Printf( "\"%s\" is not bound\n", args.Argv(1) );
@@ -618,14 +618,14 @@ void idKeyInput::WriteBindings( idFile *f ) {
 	f->Printf( "unbindall\n" );
 
 	for ( i = 0; i < MAX_KEYS; i++ ) {
-		if ( keys[i].binding.Length() ) {
+		if ( _keys[i].binding.Length() ) {
 			const char *name = KeyNumToString( i, false );
 
 			// handle the escape character nicely
 			if ( !strcmp( name, "\\" ) ) {
-				f->Printf( "bind \"\\\" \"%s\"\n", keys[i].binding.c_str() );
+				f->Printf( "bind \"\\\" \"%s\"\n", _keys[i].binding.c_str() );
 			} else {
-				f->Printf( "bind \"%s\" \"%s\"\n", KeyNumToString( i, false ), keys[i].binding.c_str() );
+				f->Printf( "bind \"%s\" \"%s\"\n", KeyNumToString( i, false ), _keys[i].binding.c_str() );
 			}
 		}
 	}
@@ -640,8 +640,8 @@ void Key_ListBinds_f( const idCmdArgs &args ) {
 	int		i;
 
 	for ( i = 0; i < MAX_KEYS; i++ ) {
-		if ( keys[i].binding.Length() ) {
-			common->Printf( "%s \"%s\"\n", idKeyInput::KeyNumToString( i, false ), keys[i].binding.c_str() );
+		if ( _keys[i].binding.Length() ) {
+			common->Printf( "%s \"%s\"\n", idKeyInput::KeyNumToString( i, false ), _keys[i].binding.c_str() );
 		}
 	}
 }
@@ -659,7 +659,7 @@ const char *idKeyInput::KeysFromBinding( const char *bind ) {
 	keyName[0] = '\0';
 	if ( bind && *bind ) {
 		for ( i = 0; i < MAX_KEYS; i++ ) {
-			if ( keys[i].binding.Icmp( bind ) == 0 ) {
+			if ( _keys[i].binding.Icmp( bind ) == 0 ) {
 				if ( keyName[0] != '\0' ) {
 					idStr::Append( keyName, sizeof( keyName ), common->GetLanguageDict()->GetString( "#str_07183" ) );
 				}
@@ -685,7 +685,7 @@ const char *idKeyInput::BindingFromKey( const char *key ) {
 	if ( keyNum<0 || keyNum >= MAX_KEYS ) {
 		return NULL;
 	}
-	return keys[keyNum].binding.c_str();
+	return _keys[keynum].binding.c_str();
 }
 
 /*
@@ -699,7 +699,7 @@ bool idKeyInput::UnbindBinding( const char *binding ) {
 
 	if ( binding && *binding ) {
 		for ( i = 0; i < MAX_KEYS; i++ ) {
-			if ( keys[i].binding.Icmp( binding ) == 0 ) {
+			if ( _keys[i].binding.Icmp( binding ) == 0 ) {
 				SetBinding( i, "" );
 				unbound = true;
 			}
@@ -718,7 +718,7 @@ int idKeyInput::NumBinds( const char *binding ) {
 
 	if ( binding && *binding ) {
 		for ( i = 0; i < MAX_KEYS; i++ ) {
-			if ( keys[i].binding.Icmp( binding ) == 0 ) {
+			if ( _keys[i].binding.Icmp( binding ) == 0 ) {
 				count++;
 			}
 		}
@@ -733,7 +733,7 @@ idKeyInput::KeyIsBountTo
 */
 bool idKeyInput::KeyIsBoundTo( int keynum, const char *binding ) {
 	if ( keynum >= 0 && keynum < MAX_KEYS ) {
-		return ( keys[keynum].binding.Icmp( binding ) == 0 );
+		return ( _keys[keynum].binding.Icmp( binding ) == 0 );
 	}
 	return false;
 }
@@ -747,7 +747,7 @@ Called by the system for both key up and key down events
 ===================
 */
 void idKeyInput::PreliminaryKeyEvent( int keynum, bool down ) {
-	keys[keynum].down = down;
+	_keys[keynum].down = down;
 
 #ifdef ID_DOOM_LEGACY
 	if ( down && keynum < 127 ) { // DG: only ASCII keys are of interest here
@@ -774,13 +774,13 @@ idKeyInput::ExecKeyBinding
 bool idKeyInput::ExecKeyBinding( int keynum ) {
 	// commands that are used by the async thread
 	// don't add text
-	if ( keys[keynum].usercmdAction ) {
+	if ( _keys[keynum].usercmdAction ) {
 		return false;
 	}
 
 	// send the bound action
-	if ( keys[keynum].binding.Length() ) {
-		cmdSystem->BufferCommandText( CMD_EXEC_APPEND, keys[keynum].binding.c_str() );
+	if ( _keys[keynum].binding.Length() ) {
+		cmdSystem->BufferCommandText( CMD_EXEC_APPEND, _keys[keynum].binding.c_str() );
 		cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "\n" );
 	}
 	return true;
@@ -795,7 +795,7 @@ void idKeyInput::ClearStates( void ) {
 	int i;
 
 	for ( i = 0; i < MAX_KEYS; i++ ) {
-		if ( keys[i].down ) {
+		if ( _keys[i].down ) {
 			PreliminaryKeyEvent( i, false );
 		}
 		keys[i].down = false;

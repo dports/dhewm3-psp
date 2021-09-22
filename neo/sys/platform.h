@@ -137,7 +137,7 @@ If you have questions concerning this license or the applicable additional terms
 
 
 // Unix
-#ifdef __unix__
+#if defined(__unix__) || defined(__PSP__)
 
 #define _alloca( x )				(({assert( (x)<600000 );}), alloca( (x) ))
 #define _alloca16( x )				(({assert( (x)<600000 );}),((void *)((((uintptr_t)alloca( (x)+15 )) + 15) & ~15)))

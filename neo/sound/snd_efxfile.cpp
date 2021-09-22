@@ -43,11 +43,14 @@ idSoundEffect::idSoundEffect() :
 }
 
 idSoundEffect::~idSoundEffect() {
+#ifndef __PSP__
 	if (soundSystemLocal.alIsEffect(effect))
 	    soundSystemLocal.alDeleteEffects(1, &effect);
+#endif
 }
 
 bool idSoundEffect::alloc() {
+#ifndef __PSP__
 	alGetError();
 
 	ALenum e;
@@ -65,6 +68,7 @@ bool idSoundEffect::alloc() {
 		common->Warning("idSoundEffect::alloc: alEffecti failed: 0x%x", e);
 		return false;
 	}
+#endif
 
 	return true;
 }
@@ -156,6 +160,7 @@ idEFXFile::ReadEffect
 	} while (false)
 
 bool idEFXFile::ReadEffect( idLexer &src, idSoundEffect *effect ) {
+#ifndef __PSP__
 	idToken name, token;
 
 	if ( !src.ReadToken( &token ) )
@@ -259,7 +264,7 @@ bool idEFXFile::ReadEffect( idLexer &src, idSoundEffect *effect ) {
 			src.Error( "idEFXFile::ReadEffect: Invalid parameter in reverb definition" );
 		}
 	} while ( 1 );
-
+#endif
 	return true;
 }
 

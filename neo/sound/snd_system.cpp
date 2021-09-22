@@ -412,6 +412,7 @@ void idSoundSystemLocal::Init() {
 			alcResetDeviceSOFT = (LPALCRESETDEVICESOFT)alcGetProcAddress( openalDevice, "alcResetDeviceSOFT" );
 		}
 
+#ifndef __PSP__
 		// try to obtain EFX extensions
 		if (alcIsExtensionPresent(openalDevice, "ALC_EXT_EFX")) {
 			common->Printf( "OpenAL: found EFX extension\n" );
@@ -455,6 +456,7 @@ void idSoundSystemLocal::Init() {
 			alAuxiliaryEffectSloti = NULL;
 			alAuxiliaryEffectSlotf = NULL;
 		}
+#endif		
 
 		ALuint handle;
 		openalSourceCount = 0;
