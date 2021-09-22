@@ -57,7 +57,7 @@ SRC_RENDERER = \
 	renderer/tr_turboshadow.o
 
 SRC_FRAMEWORK = \
-	framework/CVarSystem.o \
+	#framework/CVarSystem.o \
 	framework/CmdSystem.o \
 	framework/Common.o \
 	framework/Compressor.o \
