@@ -21,4 +21,4 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: PSP x64
-        path: /home/runner/work/dhewm3-psp/dhewm3-psp/bin/
+        path: bin/
