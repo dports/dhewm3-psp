@@ -461,7 +461,8 @@ main
 #define SDL_main main
 #endif
 
-int main(int argc, char *argv[])
+//int main(int argc, char *argv[])
+extern "C" int main(int argc, char* args[])
 #ifdef __PSP__
     pspDebugScreenInit();
     sdl_psp_setup_callbacks();
