@@ -4,7 +4,7 @@ MEDIA = /home/runner/work/dhewm3-psp/dhewm3-psp/bin/
 TARGET = dhewm3
 
 SRC_RENDERER = \
-	renderer/jpeg_memory_src.o \
+	#renderer/jpeg_memory_src.o \
 	renderer/Cinematic.o \
 	renderer/GuiModel.o \
 	renderer/Image_files.o \
