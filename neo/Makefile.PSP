@@ -6,8 +6,6 @@ OBJS += \
 PSPSDK=$(shell psp-config --pspsdk-path)
 PSPDEV=$(shell psp-config -d)
 PSPBIN = $(PSPDEV)/bin
-CFLAGS += $(shell $(PSPBIN)/sdl-config --cflags)
-LIBS += $(shell $(PSPBIN)/sdl-config --libs)
 LIBS += -lSDL -lGL -ljpeg -lvorbisfile -lvorbis -logg -lpspaudio -lpsphprm -lpsprtc -lpspvfpu -lpspirkeyb -lpsppower -lpspgu -lm -lstdc++ -lz
 
 PSP = yes
