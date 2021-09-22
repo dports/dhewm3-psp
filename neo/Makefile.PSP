@@ -4,7 +4,6 @@ MEDIA = /home/runner/work/dhewm3-psp/dhewm3-psp/bin/
 TARGET = dhewm3
 
 SRC_RENDERER = \
-	#renderer/jpeg_memory_src.o \
 	renderer/Cinematic.o \
 	renderer/GuiModel.o \
 	renderer/Image_files.o \
@@ -57,7 +56,7 @@ SRC_RENDERER = \
 	renderer/tr_turboshadow.o
 
 SRC_FRAMEWORK = \
-	#framework/CVarSystem.o \
+	framework/CVarSystem.o \
 	framework/CmdSystem.o \
 	framework/Common.o \
 	framework/Compressor.o \
