@@ -1,0 +1,35 @@
+BUILD_PRX          = 1
+PSP_LARGE_MEMORY   = 1
+HAVE_KERNEL_PRX    = 1
+BIG_STACK          = 0
+
+TARGET = dhewm3
+
+INCDIR = 
+CFLAGS = -O3 -G0 -std=gnu99 -ffast-math -fsingle-precision-constant -D__PSP__
+ASFLAGS = $(CFLAGS)
+
+LIBDIR =
+LDFLAGS =
+LIBS = -lSDL -lGL -ljpeg -lvorbisfile -lvorbis -logg -lpsphprm -lpsprtc -lpspvfpu -lpspirkeyb -lz -lstdc++ -lpspgu -lpspgum -lm -lpspaudio -lpspfpu -lpsppower -lpsprtc -lpthread-psp
+
+ifeq ($(HAVE_KERNEL_PRX), 1)
+CFLAGS += -DHAVE_KERNEL_PRX
+endif
+
+ifeq ($(BIG_STACK), 1)
+CFLAGS += -DBIG_STACK
+endif
+
+EXTRA_TARGETS = EBOOT.PBP
+PSP_EBOOT_TITLE = dhewm3
+
+PSPSDK=$(shell psp-config --pspsdk-path)
+include $(PSPSDK)/lib/build.mak
+
+pspsh-run:
+	pspsh -e reset
+	pspsh -e ./dhewm3.prx
+	pspsh
+
+run: clean all pspsh-run
