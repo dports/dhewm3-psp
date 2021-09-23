@@ -45,7 +45,7 @@ static xthreadInfo	*thread[MAX_THREADS] = { };
 static size_t		thread_count = 0;
 
 static bool mainThreadIDset = false;
-static SDL_threadID mainThreadID;
+static SDL_ThreadID mainThreadID;
 
 /*
 ==============
@@ -70,8 +70,7 @@ unsigned int Sys_Milliseconds() {
 Sys_InitThreads
 ==================
 */
-void Sys_InitThreads() {=
-    SDL_threadID mainThreadID = SDL_ThreadID();
+void Sys_InitThreads() {
 	mainThreadIDset = true;
 
 	// critical sections
