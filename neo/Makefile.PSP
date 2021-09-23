@@ -1,10 +1,11 @@
+SRC_DIR = /home/runner/work/dhewm3-psp/dhewm3-psp/neo/
 PSPSDK=$(shell psp-config --pspsdk-path)
 PSPBIN=$(shell psp-config --psp-prefix)/bin
 MEDIA = /home/runner/work/dhewm3-psp/dhewm3-psp/bin/
 TARGET = dhewm3
 
 SRC_RENDERER = \
-	neo/renderer/Cinematic.o \
+	$(SRC_DIR)/renderer/Cinematic.o \
 	renderer/draw_arb2.o \
 	renderer/draw_common.o \
 	renderer/GuiModel.o \
