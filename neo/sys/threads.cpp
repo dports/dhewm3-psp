@@ -26,6 +26,8 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+#include <stdio.h>
+#include <SDL.h>
 #include <SDL_version.h>
 #include <SDL_mutex.h>
 #include <SDL_thread.h>
@@ -45,7 +47,7 @@ static xthreadInfo	*thread[MAX_THREADS] = { };
 static size_t		thread_count = 0;
 
 static bool mainThreadIDset = false;
-static SDL_ThreadID mainThreadID;
+static SDL_threadID mainThreadID = -1;
 
 /*
 ==============
@@ -71,6 +73,7 @@ Sys_InitThreads
 ==================
 */
 void Sys_InitThreads() {
+	mainThreadID = SDL_ThreadID();
 	mainThreadIDset = true;
 
 	// critical sections
