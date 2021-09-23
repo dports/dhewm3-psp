@@ -2865,6 +2865,7 @@ static bool checkForHelp(int argc, char **argv)
 	return false;
 }
 
+#ifndef __PSP__
 #ifdef UINTPTR_MAX // DG: make sure D3_SIZEOFPTR is consistent with reality
 
 #if D3_SIZEOFPTR == 4
@@ -2882,6 +2883,9 @@ static bool checkForHelp(int argc, char **argv)
 #endif
 
 #endif // UINTPTR_MAX defined
+#else
+#define D3_SIZEOFPTR 4
+#endif
 
 /*
 =================
