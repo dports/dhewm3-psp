@@ -328,7 +328,9 @@ void idSoundSystemLocal::Init() {
 	graph = NULL;
 
 	// DG: added these for CheckDeviceAndRecoverIfNeeded()
+#ifndef __PSP__
 	alcResetDeviceSOFT = NULL;
+#endif
 	resetRetryCount = 0;
 	lastCheckTime = 0;
 
@@ -403,7 +405,7 @@ void idSoundSystemLocal::Init() {
 		common->Printf( "OpenAL vendor: %s\n", alGetString(AL_VENDOR) );
 		common->Printf( "OpenAL renderer: %s\n", alGetString(AL_RENDERER) );
 		common->Printf( "OpenAL version: %s\n", alGetString(AL_VERSION) );
-
+#ifndef __PSP__
 		// DG: extensions needed for CheckDeviceAndRecoverIfNeeded()
 		bool hasAlcExtDisconnect = alcIsExtensionPresent( openalDevice, "ALC_EXT_disconnect" ) != AL_FALSE;
 		bool hasAlcSoftHrtf = alcIsExtensionPresent( openalDevice, "ALC_SOFT_HRTF" ) != AL_FALSE;
@@ -412,7 +414,6 @@ void idSoundSystemLocal::Init() {
 			alcResetDeviceSOFT = (LPALCRESETDEVICESOFT)alcGetProcAddress( openalDevice, "alcResetDeviceSOFT" );
 		}
 
-#ifndef __PSP__
 		// try to obtain EFX extensions
 		if (alcIsExtensionPresent(openalDevice, "ALC_EXT_EFX")) {
 			common->Printf( "OpenAL: found EFX extension\n" );
@@ -615,9 +616,11 @@ bool idSoundSystemLocal::CheckDeviceAndRecoverIfNeeded()
 {
 	static const int maxRetries = 20;
 
+#ifndef __PSP__
 	if ( alcResetDeviceSOFT == NULL ) {
 		return true; // we can't check or reset, just pretend everything is fine..
 	}
+#endif
 
 	unsigned int curTime = Sys_Milliseconds();
 	if ( curTime - lastCheckTime >= 1000 ) // check once per second
@@ -645,11 +648,13 @@ bool idSoundSystemLocal::CheckDeviceAndRecoverIfNeeded()
 			return false;
 		}
 
+#ifndef __PSP__
 		if ( alcResetDeviceSOFT( openalDevice, NULL ) ) {
 			common->Printf( "OpenAL: resetting device succeeded!\n" );
 			resetRetryCount = 0;
 			return true;
 		}
+#endif
 
 		++resetRetryCount;
 		return false;
