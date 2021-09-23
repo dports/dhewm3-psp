@@ -764,7 +764,9 @@ public:
 	static int				EFXAvailable;
 
 	// DG: for CheckDeviceAndRecoverIfNeeded()
+#ifndef __PSP__
 	LPALCRESETDEVICESOFT	alcResetDeviceSOFT; // needs ALC_SOFT_HRTF extension
+#endif
 	int						resetRetryCount;
 	unsigned int			lastCheckTime;
 
