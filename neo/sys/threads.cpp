@@ -48,7 +48,7 @@ static bool mainThreadIDset = false;
 #ifndef __PSP__
 static SDL_threadID mainThreadID = -1;
 #else
-SDL_threadID mainThreadID;
+SDL_ThreadID mainThreadID;
 #endif
 
 /*
