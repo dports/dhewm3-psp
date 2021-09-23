@@ -571,12 +571,16 @@ int idTypeInfoTools::WriteVariable_r( const void *varPtr, const char *varName, c
 
 	// if this is a pointer
 
+#ifndef __PSP__
 #if D3_SIZEOFPTR == 4
 	const uintptr_t uninitPtr = (uintptr_t)0xcdcdcdcdUL;
 #elif D3_SIZEOFPTR == 8
 	const uintptr_t uninitPtr = (uintptr_t)0xcdcdcdcdcdcdcdcdULL;
 #else
 	#error "Unexpected pointer size"
+#endif
+#else
+	const uintptr_t uninitPtr = (uintptr_t)0xcdcdcdcdUL;
 #endif
 
 	isPointer = 0;
