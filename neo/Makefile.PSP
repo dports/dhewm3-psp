@@ -1,35 +1,403 @@
-BUILD_PRX          = 1
-PSP_LARGE_MEMORY   = 1
-HAVE_KERNEL_PRX    = 1
-BIG_STACK          = 0
-
+PSPSDK=$(shell psp-config --pspsdk-path)
+PSPBIN=$(shell psp-config --psp-prefix)/bin
+MEDIA = /home/runner/work/dhewm3-psp/dhewm3-psp/bin/
 TARGET = dhewm3
 
-INCDIR = 
-CFLAGS = -O3 -G0 -std=gnu99 -ffast-math -fsingle-precision-constant -D__PSP__
-ASFLAGS = $(CFLAGS)
+SRC_RENDERER = \
+	renderer/Cinematic.o \
+	renderer/draw_arb2.o \
+	renderer/draw_common.o \
+	renderer/GuiModel.o \
+	renderer/Image_files.o \
+	renderer/Image_init.o \
+	renderer/Image_load.o \
+	renderer/Image_process.o \
+	renderer/Image_program.o \
+	renderer/Interaction.o \
+	renderer/Material.o \
+	renderer/MegaTexture.o \
+	renderer/Model.o \
+	renderer/ModelDecal.o \
+	renderer/ModelManager.o \
+	renderer/ModelOverlay.o \
+	renderer/Model_ase.o \
+	renderer/Model_beam.o \
+	renderer/Model_liquid.o \
+	renderer/Model_lwo.o \
+	renderer/Model_ma.o \
+	renderer/Model_md3.o \
+	renderer/Model_md5.o \
+	renderer/Model_prt.o \
+	renderer/Model_sprite.o \
+	renderer/RenderEntity.o \
+	renderer/RenderSystem.o \
+	renderer/RenderSystem_init.o \
+	renderer/RenderWorld.o \
+	renderer/RenderWorld_demo.o \
+	renderer/RenderWorld_load.o \
+	renderer/RenderWorld_portals.o \
+	renderer/tr_backend.o \
+	renderer/tr_deform.o \
+	renderer/tr_font.o \
+	renderer/tr_guisurf.o \
+	renderer/tr_light.o \
+	renderer/tr_lightrun.o \
+	renderer/tr_main.o \
+	renderer/tr_orderIndexes.o \
+	renderer/tr_polytope.o \
+	renderer/tr_render.o \
+	renderer/tr_rendertools.o \
+	renderer/tr_shadowbounds.o \
+	renderer/tr_stencilshadow.o \
+	renderer/tr_subview.o \
+	renderer/tr_trace.o \
+	renderer/tr_trisurf.o \
+	renderer/tr_turboshadow.o \
+	renderer/VertexCache.o
 
-LIBDIR =
-LDFLAGS =
-LIBS = -lSDL -lGL -ljpeg -lvorbisfile -lvorbis -logg -lpsphprm -lpsprtc -lpspvfpu -lpspirkeyb -lz -lstdc++ -lpspgu -lpspgum -lm -lpspaudio -lpspfpu -lpsppower -lpsprtc -lpthread-psp
+SRC_FRAMEWORK = \
+	framework/CmdSystem.o \
+	framework/Common.o \
+	framework/Compressor.o \
+	framework/Console.o \
+	framework/CVarSystem.o \
+	framework/DeclAF.o \
+	framework/DeclEntityDef.o \
+	framework/DeclFX.o \
+	framework/DeclManager.o \
+	framework/DeclParticle.o \
+	framework/DeclPDA.o \
+	framework/DeclSkin.o \
+	framework/DeclTable.o \
+	framework/DemoFile.o \
+	framework/EditField.o \
+	framework/EventLoop.o \
+	framework/File.o \
+	framework/FileSystem.o \
+	framework/KeyInput.o \
+	framework/Session.o \
+	framework/Session_menu.o \
+	framework/UsercmdGen.o \
+	framework/async/AsyncClient.o \
+	framework/async/AsyncNetwork.o \
+	framework/async/AsyncServer.o \
+	framework/async/MsgChannel.o \
+	framework/async/NetworkSystem.o \
+	framework/async/ServerScan.o \
+	framework/minizip/unzip.o
 
-ifeq ($(HAVE_KERNEL_PRX), 1)
-CFLAGS += -DHAVE_KERNEL_PRX
-endif
+SRC_CM = \
+	cm/CollisionModel_contacts.o \
+	cm/CollisionModel_contents.o \
+	cm/CollisionModel_debug.o \
+	cm/CollisionModel_files.o \
+	cm/CollisionModel_load.o \
+	cm/CollisionModel_rotate.o \
+	cm/CollisionModel_trace.o \
+	cm/CollisionModel_translate.o
 
-ifeq ($(BIG_STACK), 1)
-CFLAGS += -DBIG_STACK
-endif
+SRC_DMAP = \
+	tools/compilers/dmap/dmap.o \
+	tools/compilers/dmap/facebsp.o \
+	tools/compilers/dmap/gldraw.o \
+	tools/compilers/dmap/glfile.o \
+	tools/compilers/dmap/leakfile.o \
+	tools/compilers/dmap/map.o \
+	tools/compilers/dmap/optimize.o \
+	tools/compilers/dmap/output.o \
+	tools/compilers/dmap/portals.o \
+	tools/compilers/dmap/shadowopt3.o \
+	tools/compilers/dmap/tritjunction.o \
+	tools/compilers/dmap/tritools.o \
+	tools/compilers/dmap/ubrush.o \
+	tools/compilers/dmap/usurface.o
 
+SRC_AAS = \
+	tools/compilers/aas/AASBuild.o \
+	tools/compilers/aas/AASBuild_file.o \
+	tools/compilers/aas/AASBuild_gravity.o \
+	tools/compilers/aas/AASBuild_ledge.o \
+	tools/compilers/aas/AASBuild_merge.o \
+	tools/compilers/aas/AASCluster.o \
+	tools/compilers/aas/AASFile.o \
+	tools/compilers/aas/AASFile_optimize.o \
+	tools/compilers/aas/AASFile_sample.o \
+	tools/compilers/aas/AASReach.o \
+	tools/compilers/aas/AASFileManager.o \
+	tools/compilers/aas/Brush.o \
+	tools/compilers/aas/BrushBSP.o
+
+SRC_ROQ = \
+	tools/compilers/roqvq/NSBitmapImageRep.o \
+	tools/compilers/roqvq/codec.o \
+	tools/compilers/roqvq/roq.o \
+	tools/compilers/roqvq/roqParam.o
+
+SRC_RENDERBUMP = \
+	tools/compilers/renderbump/renderbump.o
+
+SRC_SND = \
+	sound/snd_cache.o \
+	sound/snd_decoder.o \
+	sound/snd_efxfile.o \
+	sound/snd_emitter.o \
+	sound/snd_shader.o \
+	sound/snd_system.o \
+	sound/snd_wavefile.o \
+	sound/snd_world.o
+
+SRC_UI = \
+	ui/BindWindow.o \
+	ui/ChoiceWindow.o \
+	ui/DeviceContext.o \
+	ui/EditWindow.o \
+	ui/FieldWindow.o \
+	ui/GameBearShootWindow.o \
+	ui/GameBustOutWindow.o \
+	ui/GameSSDWindow.o \
+	ui/GuiScript.o \
+	ui/ListGUI.o \
+	ui/ListWindow.o \
+	ui/MarkerWindow.o \
+	ui/RegExp.o \
+	ui/RenderWindow.o \
+	ui/SimpleWindow.o \
+	ui/SliderWindow.o \
+	ui/UserInterface.o \
+	ui/Window.o \
+	ui/Winvar.o
+
+SRC_TOOLS = \
+	tools/guied/GEWindowWrapper_stub.o
+
+SRC_IDLIB = \
+	idlib/bv/Bounds.o \
+	idlib/bv/Frustum.o \
+	idlib/bv/Sphere.o \
+	idlib/bv/Box.o \
+	idlib/geometry/DrawVert.o \
+	idlib/geometry/Winding2D.o \
+	idlib/geometry/Surface_SweptSpline.o \
+	idlib/geometry/Winding.o \
+	idlib/geometry/Surface.o \
+	idlib/geometry/Surface_Patch.o \
+	idlib/geometry/TraceModel.o \
+	idlib/geometry/JointTransform.o \
+	idlib/hashing/CRC32.o \
+	idlib/hashing/MD4.o \
+	idlib/hashing/MD5.o \
+	idlib/math/Angles.o \
+	idlib/math/Lcp.o \
+	idlib/math/Math.o \
+	idlib/math/Matrix.o \
+	idlib/math/Ode.o \
+	idlib/math/Plane.o \
+	idlib/math/Pluecker.o \
+	idlib/math/Polynomial.o \
+	idlib/math/Quat.o \
+	idlib/math/Rotation.o \
+	idlib/math/Simd.o \
+	idlib/math/Simd_Generic.o \
+	idlib/math/Simd_AltiVec.o \
+	idlib/math/Simd_MMX.o \
+	idlib/math/Simd_3DNow.o \
+	idlib/math/Simd_SSE.o \
+	idlib/math/Simd_SSE2.o \
+	idlib/math/Simd_SSE3.o \
+	idlib/math/Vector.o \
+	idlib/BitMsg.o \
+	idlib/LangDict.o \
+	idlib/Lexer.o \
+	idlib/Lib.o \
+	idlib/containers/HashIndex.o \
+	idlib/Dict.o \
+	idlib/Str.o \
+	idlib/Parser.o \
+	idlib/MapFile.o \
+	idlib/CmdArgs.o \
+	idlib/Token.o \
+	idlib/Base64.o \
+	idlib/Timer.o \
+	idlib/Heap.o
+
+SRC_GAME = \
+	game/AF.o \
+	game/AFEntity.o \
+	game/Actor.o \
+	game/Camera.o \
+	game/Entity.o \
+	game/BrittleFracture.o \
+	game/Fx.o \
+	game/GameEdit.o \
+	game/Game_local.o \
+	game/Game_network.o \
+	game/Item.o \
+	game/IK.o \
+	game/Light.o \
+	game/Misc.o \
+	game/Mover.o \
+	game/Moveable.o \
+	game/MultiplayerGame.o \
+	game/Player.o \
+	game/PlayerIcon.o \
+	game/PlayerView.o \
+	game/Projectile.o \
+	game/Pvs.o \
+	game/SecurityCamera.o \
+	game/SmokeParticles.o \
+	game/Sound.o \
+	game/Target.o \
+	game/Trigger.o \
+	game/Weapon.o \
+	game/WorldSpawn.o \
+	game/ai/AAS.o \
+	game/ai/AAS_debug.o \
+	game/ai/AAS_pathing.o \
+	game/ai/AAS_routing.o \
+	game/ai/AI.o \
+	game/ai/AI_events.o \
+	game/ai/AI_pathing.o \
+	game/ai/AI_Vagary.o \
+	game/gamesys/DebugGraph.o \
+	game/gamesys/Class.o \
+	game/gamesys/Event.o \
+	game/gamesys/SaveGame.o \
+	game/gamesys/SysCmds.o \
+	game/gamesys/SysCvar.o \
+	game/gamesys/TypeInfo.o \
+	game/anim/Anim.o \
+	game/anim/Anim_Blend.o \
+	game/anim/Anim_Import.o \
+	game/anim/Anim_Testmodel.o \
+	game/script/Script_Compiler.o \
+	game/script/Script_Interpreter.o \
+	game/script/Script_Program.o \
+	game/script/Script_Thread.o \
+	game/physics/Clip.o \
+	game/physics/Force.o \
+	game/physics/Force_Constant.o \
+	game/physics/Force_Drag.o \
+	game/physics/Force_Field.o \
+	game/physics/Force_Spring.o \
+	game/physics/Physics.o \
+	game/physics/Physics_AF.o \
+	game/physics/Physics_Actor.o \
+	game/physics/Physics_Base.o \
+	game/physics/Physics_Monster.o \
+	game/physics/Physics_Parametric.o \
+	game/physics/Physics_Player.o \
+	game/physics/Physics_RigidBody.o \
+	game/physics/Physics_Static.o \
+	game/physics/Physics_StaticMulti.o \
+	game/physics/Push.o
+
+SRC_D3XP = \
+	d3xp/AF.o \
+	d3xp/AFEntity.o \
+	d3xp/Actor.o \
+	d3xp/Camera.o \
+	d3xp/Entity.o \
+	d3xp/BrittleFracture.o \
+	d3xp/Fx.o \
+	d3xp/GameEdit.o \
+	d3xp/Game_local.o \
+	d3xp/Game_network.o \
+	d3xp/Item.o \
+	d3xp/IK.o \
+	d3xp/Light.o \
+	d3xp/Misc.o \
+	d3xp/Mover.o \
+	d3xp/Moveable.o \
+	d3xp/MultiplayerGame.o \
+	d3xp/Player.o \
+	d3xp/PlayerIcon.o \
+	d3xp/PlayerView.o \
+	d3xp/Projectile.o \
+	d3xp/Pvs.o \
+	d3xp/SecurityCamera.o \
+	d3xp/SmokeParticles.o \
+	d3xp/Sound.o \
+	d3xp/Target.o \
+	d3xp/Trigger.o \
+	d3xp/Weapon.o \
+	d3xp/WorldSpawn.o \
+	d3xp/ai/AAS.o \
+	d3xp/ai/AAS_debug.o \
+	d3xp/ai/AAS_pathing.o \
+	d3xp/ai/AAS_routing.o \
+	d3xp/ai/AI.o \
+	d3xp/ai/AI_events.o \
+	d3xp/ai/AI_pathing.o \
+	d3xp/ai/AI_Vagary.o \
+	d3xp/gamesys/DebugGraph.o \
+	d3xp/gamesys/Class.o \
+	d3xp/gamesys/Event.o \
+	d3xp/gamesys/SaveGame.o \
+	d3xp/gamesys/SysCmds.o \
+	d3xp/gamesys/SysCvar.o \
+	d3xp/gamesys/TypeInfo.o \
+	d3xp/anim/Anim.o \
+	d3xp/anim/Anim_Blend.o \
+	d3xp/anim/Anim_Import.o \
+	d3xp/anim/Anim_Testmodel.o \
+	d3xp/script/Script_Compiler.o \
+	d3xp/script/Script_Interpreter.o \
+	d3xp/script/Script_Program.o \
+	d3xp/script/Script_Thread.o \
+	d3xp/physics/Clip.o \
+	d3xp/physics/Force.o \
+	d3xp/physics/Force_Constant.o \
+	d3xp/physics/Force_Drag.o \
+	d3xp/physics/Force_Field.o \
+	d3xp/physics/Force_Spring.o \
+	d3xp/physics/Physics.o \
+	d3xp/physics/Physics_AF.o \
+	d3xp/physics/Physics_Actor.o \
+	d3xp/physics/Physics_Base.o \
+	d3xp/physics/Physics_Monster.o \
+	d3xp/physics/Physics_Parametric.o \
+	d3xp/physics/Physics_Player.o \
+	d3xp/physics/Physics_RigidBody.o \
+	d3xp/physics/Physics_Static.o \
+	d3xp/physics/Physics_StaticMulti.o \
+	d3xp/physics/Push.o \
+	d3xp/Grabber.o \
+	d3xp/physics/Force_Grab.o
+
+SRC_SYS_BASE = \
+	sys/cpu.o \
+	sys/threads.o \
+	sys/events.o \
+	sys/sys_local.o \
+	sys/posix/posix_net.o \
+	sys/posix/posix_main.o \
+	sys/linux/main.o
+
+SRC_SYS_CORE = \
+	sys/glimp.o
+
+OBJS = $(SRC_RENDERER) $(SRC_FRAMEWORK) $(SRC_CM) $(SRC_DMAP) $(SRC_AAS) \
+       $(SRC_ROQ) $(SRC_RENDERBUMP) $(SRC_SND) $(SRC_UI) $(SRC_TOOLS) \
+       $(SRC_IDLIB) $(SRC_GAME) $(SRC_SYS_BASE) $(SRC_SYS_CORE)
+       #$(SRC_D3XP)
+       
+LIBS = -lSDL -lGL -ljpeg -lvorbisfile -lvorbis -logg -lOpenAL32 -lpspaudio -lpsphprm -lpsprtc -lpspvfpu -lpspirkeyb -lpsppower -lpspgu -lm -lstdc++ -lz
+
+CFLAGS = -O2 -G0 -D__PSP__ $(shell $(PSPBIN)/sdl-config --cflags) \
+         -I./game/
+CXXFLAGS = -fexceptions
+ASFLAGS = 
+
+BUILD_PRX = 0
 EXTRA_TARGETS = EBOOT.PBP
 PSP_EBOOT_TITLE = dhewm3
+#PSP_EBOOT_ICON = icon0.png
+PSP_FW_VERSION = 500
+PSP_LARGE_MEMORY = 1
 
-PSPSDK=$(shell psp-config --pspsdk-path)
-include $(PSPSDK)/lib/build.mak
+include $(PSPSDK)/lib/build.mak 
+install:
+	cp ./EBOOT.PBP $(MEDIA)$(TARGET)
+dir:
+	mkdir $(MEDIA)$(TARGET)
 
-pspsh-run:
-	pspsh -e reset
-	pspsh -e ./dhewm3.prx
-	pspsh
-
-run: clean all pspsh-run

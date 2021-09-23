@@ -43,42 +43,45 @@ If you have questions concerning this license or the applicable additional terms
 #include <locale.h>
 
 #ifdef __PSP__
-#include "SDL_main.h"
-#include <pspkernel.h>
-#include <pspdebug.h>
-#include <pspsdk.h>
-#include <pspthreadman.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-PSP_MODULE_INFO("dhewm3", 0, 1, 1);
-PSP_HEAP_SIZE_MAX();
-PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
-
-int sdl_psp_exit_callback(int arg1, int arg2, void *common)
+extern "C"
 {
-	exit(0);
-	return 0;
-}
+    #include <pspkernel.h>
 
-int sdl_psp_callback_thread(SceSize args, void *argp)
-{
-	int cbid;
-	cbid = sceKernelCreateCallback("Exit Callback",
-					   sdl_psp_exit_callback, NULL);
-	sceKernelRegisterExitCallback(cbid);
-	sceKernelSleepThreadCB();
-	return 0;
-}
+	PSP_MODULE_INFO("dhewm3", 0, 1, 1);
+	PSP_HEAP_SIZE_MAX();
+	PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 
-int sdl_psp_setup_callbacks(void)
-{
-	int thid = 0;
-	thid = sceKernelCreateThread("update_thread",
-					 sdl_psp_callback_thread, 0x11, 0xFA0, 0, 0);
-	if(thid >= 0)
-		sceKernelStartThread(thid, 0, 0);
-	return thid;
+	int callbacks_exit(int, int, void*)
+	{
+		sceKernelExitGame();
+
+		return 0;
+	}
+	  
+	int callbacks_thread(unsigned int, void*)
+	{
+		int id;
+		
+		id = sceKernelCreateCallback("exit_cb", callbacks_exit, NULL);
+		sceKernelRegisterExitCallback(id);
+		sceKernelSleepThreadCB();
+		
+		return 0;
+	}
+	  
+	int callbacks_setup()
+	{
+		int id;
+		
+		id = sceKernelCreateThread("cb", callbacks_thread, 0x11, 0xFA0, 0, NULL);
+		
+		if (id >= 0)
+		{
+		    sceKernelStartThread(id, 0, NULL);
+		}
+		
+		return id;
+	}
 }
 #endif
 
@@ -461,17 +464,9 @@ main
 #define SDL_main main
 #endif
 
-//int main(int argc, char *argv[])
-extern "C" int main(int argc, char* args[])
+int main(int argc, char **argv) {
 #ifdef __PSP__
-    pspDebugScreenInit();
-    sdl_psp_setup_callbacks();
-
-    atexit(sceKernelExitGame);
-
-    SDL_SetMainReady();
-
-    (void)SDL_main(argc, argv);
+	callbacks_setup();
 	common->Init( 0, NULL );
 #else
 	// fallback path to the binary for systems without /proc
