@@ -464,8 +464,13 @@ void idGameLocal::SaveGame( idFile *f ) {
 
 	// DG: add some more information to savegame to make future quirks easier
 	savegame.WriteInt( INTERNAL_SAVEGAME_VERSION ); // to be independent of BUILD_NUMBER
+#ifndef __PSP__
 	savegame.WriteString( D3_OSTYPE ); // operating system - from CMake
 	savegame.WriteString( D3_ARCH ); // CPU architecture (e.g. "x86" or "x86_64") - from CMake
+#else
+	savegame.WriteString( "psp" ); // operating system - from CMake
+	savegame.WriteString( "mips_allegrex" ); // operating system - from CMake
+#endif
 	savegame.WriteString( ENGINE_VERSION );
 	savegame.WriteShort( (short)sizeof(void*) ); // tells us if it's from a 32bit (4) or 64bit system (8)
 	savegame.WriteShort( SDL_BYTEORDER ) ; // SDL_LIL_ENDIAN or SDL_BIG_ENDIAN
