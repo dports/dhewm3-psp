@@ -385,7 +385,7 @@ OBJS = $(SRC_RENDERER) $(SRC_FRAMEWORK) $(SRC_CM) $(SRC_DMAP) $(SRC_AAS) \
 LIBS = -lSDL -lGL -ljpeg -lvorbisfile -lvorbis -logg -lOpenAL32 -lpspaudio -lpsphprm -lpsprtc -lpspvfpu -lpspirkeyb -lpsppower -lpspgu -lm -lstdc++ -lz
 
 CFLAGS = -O2 -G0 -D__PSP__ $(shell $(PSPBIN)/sdl-config --cflags) \
-         -I./neo/ -I./neo/game/ -I/usr/local/pspdev/psp-ports/psp-ports-master/SDL/include/
+         -I./neo/ -I./neo/game/ -I/usr/local/pspdev/psp-ports-master/SDL/include/
 CXXFLAGS = -fexceptions
 ASFLAGS = 
 
